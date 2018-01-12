@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_marginTop="@dimen/vertical_space"
+                android:text="Wordlist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+            <RadioGroup
+                android:id="@+id/wordlists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:checked="true"
+                    android:id="@+id/phpbb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="phpbb.txt" />
+
+                <RadioButton
+                    android:id="@+id/rockyou"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="rockyou.txt" />
+
+            </RadioGroup>
+
+
+            <TextView
+                android:layout_marginTop="@dimen/vertical_space"
+                android:text="Rule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioGroup
+                android:id="@+id/rules"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/no_rule"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="No rule" />
+
+                <RadioButton
+                    android:checked="true"
+                    android:id="@+id/best64_rule"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="best64.rule" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/vertical_space"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/choose_file"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:text="Choose capture file" />
+
+                <EditText
+                    android:id="@+id/capture_file_path"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:hint="Capture path" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_marginTop="@dimen/vertical_space"
+                android:text="Timeout (minutes)"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:id="@+id/timeout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="number"
+                android:text="120" />
+    
+            <Button
+                android:layout_marginTop="@dimen/vertical_space"
+                android:id="@+id/start_upload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Start uploading" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+</android.support.constraint.ConstraintLayout>

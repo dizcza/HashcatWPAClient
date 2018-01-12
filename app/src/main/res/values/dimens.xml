@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="vertical_space">5dp</dimen>
+    <dimen name="ace">5dp</dimen>
+    <dimen name="radiogroup_margin">5dp</dimen>
+</resources>

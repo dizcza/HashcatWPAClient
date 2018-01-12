@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">HashcatWPAClient</string>
+    <string name="action_settings">Settings</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="https">https://</string>
+    <string name="signin">Sign in</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="port">443</string>
+</resources>
