@@ -2,17 +2,12 @@ package com.dizcza.hashcatwpaclient;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import net.gotev.uploadservice.BinaryUploadRequest;
@@ -21,9 +16,6 @@ import net.gotev.uploadservice.UploadNotificationConfig;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
-
-import okhttp3.Request;
 
 import static com.dizcza.hashcatwpaclient.MainActivity.httpClient;
 
@@ -99,7 +91,6 @@ public class UploadActivity extends ActivityWithMenu {
 
 
     void uploadCapture(String capPath, String filename) throws IOException {
-        String credential = ((TokenAuthenticator) httpClient.authenticator()).getCredential();
         String wordlist = Utils.getRadioGroupCheckedText(this, R.id.wordlists);
         String rule = Utils.getRadioGroupCheckedText(this, R.id.rules);
         String url = Utils.buildUrl(this, "upload");
@@ -113,7 +104,6 @@ public class UploadActivity extends ActivityWithMenu {
             String uploadId =
                     new BinaryUploadRequest(this, url)
                             .setFileToUpload(capPath)
-                            .addHeader("Authorization", credential)
                             .addHeader("filename", filename)
                             .addHeader("wordlist", wordlist)
                             .addHeader("rule", rule)

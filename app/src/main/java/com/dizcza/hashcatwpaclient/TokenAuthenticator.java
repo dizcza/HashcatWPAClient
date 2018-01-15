@@ -1,6 +1,5 @@
 package com.dizcza.hashcatwpaclient;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -17,7 +16,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 import okhttp3.Authenticator;
-import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -33,9 +31,8 @@ public class TokenAuthenticator implements Authenticator {
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    private String mCredential;
-    private final OkHttpClient mTokenClient;
     private final Context mContext;
+    private final OkHttpClient mTokenClient;
 
     TokenAuthenticator(Context context)
             throws
@@ -48,38 +45,27 @@ public class TokenAuthenticator implements Authenticator {
         mTokenClient = OkHttpSSL.getSSLSelfSignedClient(context, false);
     }
 
-    public String getCredential() throws IOException {
-        if (mCredential != null) {
-            String urlPing = Utils.buildUrl(mContext, "ping");
-            Request pingRequest = new Request.Builder()
-                    .url(urlPing)
-                    .header("Authorization", mCredential)
-                    .build();
-            Response pingResponse = mTokenClient.newCall(pingRequest).execute();
-            if (pingResponse.isSuccessful()) {
-                return mCredential;
-            }
-        }
+    public String getCredential() {
         try {
             String token = refreshToken();
-            mCredential = String.format("JWT %s", token);
-        } catch (JSONException e) {
+            return String.format("JWT %s", token);
+        } catch (JSONException | IOException e) {
             e.printStackTrace();
+            return "";
         }
-        return mCredential;
     }
 
     private String refreshToken() throws IOException, JSONException {
-        Request requestAuth = createAuthRequest();
+        Request requestAuth = createAuthRequest(mContext);
         Response responseAuth = mTokenClient.newCall(requestAuth).execute();
         JSONObject jsonObject = new JSONObject(responseAuth.body().string());
         String token = jsonObject.getString("access_token");
         return token;
     }
 
-    private Request createAuthRequest() {
-        SharedPreferences sharedPref = Utils.getSharedPref(mContext);
-        String urlAuth = Utils.buildUrl(mContext, "auth");
+    public static Request createAuthRequest(Context context) {
+        SharedPreferences sharedPref = Utils.getSharedPref(context);
+        String urlAuth = Utils.buildUrl(context, "auth");
         String username = sharedPref.getString(Constants.USERNAME_SHARED_KEY, "");
         String password = sharedPref.getString(Constants.PASSWORD_SHARED_KEY, "");
         String cred = username + ':' + password;
@@ -91,23 +77,17 @@ public class TokenAuthenticator implements Authenticator {
         return requestAuth;
     }
 
-    public void authenticate(Callback authCallback) {
-        mTokenClient.newCall(createAuthRequest()).enqueue(authCallback);
-    }
-
     @Nullable
     @Override
     public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
-        Log.d(MainActivity.TAG, "Trying to authenticate " + route.toString());
-        String header = response.request().header("Authorization");
-        if (mCredential == null || (header != null && header.equals(mCredential))) {
-            try {
-                String token = refreshToken();
-                mCredential = String.format("JWT %s", token);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return null;
-            }
+        Log.d(MainActivity.TAG, "401 authenticate " + route.toString());
+        String mCredential = "";
+        try {
+            String token = refreshToken();
+            mCredential = String.format("JWT %s", token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
         }
         Request requestAuthorized = response.request().newBuilder()
                 .header("Authorization", mCredential)

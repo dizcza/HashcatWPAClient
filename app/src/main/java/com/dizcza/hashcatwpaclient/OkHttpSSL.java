@@ -1,14 +1,8 @@
 package com.dizcza.hashcatwpaclient;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,14 +23,10 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import okhttp3.Authenticator;
-import okhttp3.Callback;
-import okhttp3.MediaType;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.Route;
 
 /**
  * Created by dizcza on 10/2/17.
@@ -80,9 +70,22 @@ public class OkHttpSSL {
                 .hostnameVerifier(hostnameVerifier);
 
         if (withAuthenticator) {
-            clientBuilder.authenticator(new TokenAuthenticator(context));
-        }
+            final TokenAuthenticator authenticator = new TokenAuthenticator(context);
+            clientBuilder.authenticator(authenticator);
 
+            clientBuilder.addInterceptor(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Request request = chain.request();
+                    Log.d(MainActivity.TAG, "intercept " + request.url());
+                    request = request.newBuilder()
+                            .header("Authorization", authenticator.getCredential())
+                            .build();
+                    Response response = chain.proceed(request);
+                    return response;
+                }
+            });
+        }
         OkHttpClient client = clientBuilder.build();
         return client;
     }

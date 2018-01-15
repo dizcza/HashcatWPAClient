@@ -97,35 +97,7 @@ public class MainActivity extends PermissionManagerActivity {
 
                         editor.commit();
 
-                        ((TokenAuthenticator) httpClient.authenticator()).authenticate(new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                String url = call.request().url().toString();
-                                final String message = String.format(Locale.getDefault(), "Failed to sign in %s. Try again", url);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-                                if (!response.isSuccessful()) {
-                                    onFailure(call, new IOException("Unexpected code " + response));
-                                    return;
-                                }
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(MainActivity.this, "Successfully signed in", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        });
-
-
+                        checkSingIn();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -134,6 +106,37 @@ public class MainActivity extends PermissionManagerActivity {
                     }
                 });
         return builder.create();
+    }
+
+    private void checkSingIn() {
+        Request authRequest = TokenAuthenticator.createAuthRequest(MainActivity.this);
+        httpClient.newCall(authRequest).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String url = call.request().url().toString();
+                final String message = String.format(Locale.getDefault(), "Failed to sign in %s. Try again", url);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    onFailure(call, new IOException("Unexpected code " + response));
+                    return;
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, "Successfully signed in", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
     private void initHttpClient() {
