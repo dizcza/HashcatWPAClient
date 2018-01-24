@@ -14,6 +14,8 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -33,6 +35,8 @@ import okhttp3.Response;
  */
 
 public class OkHttpSSL {
+
+    private static final Set<String> insecureRoutes = new HashSet<>(Arrays.asList("/auth", "//"));
 
     public static OkHttpClient getSSLSelfSignedClient(final Context context, boolean withAuthenticator)
             throws
@@ -78,9 +82,11 @@ public class OkHttpSSL {
                 public Response intercept(Chain chain) throws IOException {
                     Request request = chain.request();
                     Log.d(MainActivity.TAG, "intercept " + request.url());
-                    request = request.newBuilder()
-                            .header("Authorization", authenticator.getCredential())
-                            .build();
+                    if (!insecureRoutes.contains(request.url().encodedPath())) {
+                        request = request.newBuilder()
+                                .header("Authorization", authenticator.getCredential())
+                                .build();
+                    }
                     Response response = chain.proceed(request);
                     return response;
                 }
