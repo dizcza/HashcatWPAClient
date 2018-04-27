@@ -27,7 +27,14 @@
                 android:orientation="vertical">
 
                 <RadioButton
+                    android:id="@+id/no_wordlist"
+                    android:alpha="0.7"
                     android:checked="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="(None)" />
+
+                <RadioButton
                     android:id="@+id/phpbb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -55,12 +62,13 @@
 
                 <RadioButton
                     android:id="@+id/no_rule"
+                    android:alpha="0.7"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="No rule" />
+                    android:text="(None)" />
 
                 <RadioButton
-                    android:checked="true"
                     android:id="@+id/best64_rule"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
