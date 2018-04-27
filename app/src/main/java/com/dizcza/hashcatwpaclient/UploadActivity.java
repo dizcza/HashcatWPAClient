@@ -17,16 +17,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static com.dizcza.hashcatwpaclient.MainActivity.httpClient;
-
 public class UploadActivity extends ActivityWithMenu {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.upload_layout);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         Button chooseFileButton = findViewById(R.id.choose_file);
         chooseFileButton.setOnClickListener(new View.OnClickListener() {

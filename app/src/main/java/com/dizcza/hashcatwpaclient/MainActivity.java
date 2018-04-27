@@ -33,37 +33,7 @@ import okhttp3.Response;
 public class MainActivity extends PermissionManagerActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
-    public static OkHttpClient httpClient = null;
-
-    private void showReadKeyStoreDialog() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_keystore, null);
-        builder.setView(dialogView).setCancelable(false).setPositiveButton(R.string.ok, null);
-        final AlertDialog keyStoreDialog = builder.create();
-        keyStoreDialog.show();
-        keyStoreDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("ApplySharedPref")
-            @Override
-            public void onClick(View v) {
-                SharedPreferences sharedPref = Utils.getSharedPref(MainActivity.this);
-                SharedPreferences.Editor editor = sharedPref.edit();
-
-                EditText keystoreEdit = keyStoreDialog.findViewById(R.id.keystore_pass);
-                String keystore = keystoreEdit.getText().toString();
-                editor.putString(Constants.KEYSTORE_SHARED_KEY, keystore);
-
-                editor.commit();
-
-                if (OkHttpSSL.canReadKeyStore(MainActivity.this)) {
-                    Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                    initHttpClient();
-                    keyStoreDialog.dismiss();
-                } else {
-                    Toast.makeText(MainActivity.this, "Incorrect KeyStore password", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
+    private OkHttpClient httpClient;
 
     private AlertDialog createSingInDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -78,7 +48,7 @@ public class MainActivity extends PermissionManagerActivity {
 
                         EditText serverUrlView = dialogView.findViewById(R.id.server_url);
                         String serverUrl = serverUrlView.getText().toString();
-                        if (!serverUrl.equals(getString(R.string.https)) && serverUrl.endsWith("/")) {
+                        if (!serverUrl.equals(getString(R.string.http)) && serverUrl.endsWith("/")) {
                             serverUrl = serverUrl.substring(0, serverUrl.length() - 1);
                         }
                         editor.putString(Constants.SERVER_URL_SHARED_KEY, serverUrl);
@@ -139,22 +109,10 @@ public class MainActivity extends PermissionManagerActivity {
         });
     }
 
-    private void initHttpClient() {
-        try {
-            httpClient = OkHttpSSL.getSSLSelfSignedClient(this, true);
-            UploadService.HTTP_STACK = new OkHttpStack(httpClient);
-        } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | IOException | CertificateException e) {
-            toastShowException(e);
-            e.printStackTrace();
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         checkPermissions();
 
         // fixme: make async
@@ -162,12 +120,8 @@ public class MainActivity extends PermissionManagerActivity {
         StrictMode.setThreadPolicy(policy);
 
         initMenuButtons();
-
-        if (OkHttpSSL.canReadKeyStore(this)) {
-            initHttpClient();
-        } else {
-            showReadKeyStoreDialog();
-        }
+        httpClient = new OkHttpClient();
+        UploadService.HTTP_STACK = new OkHttpStack(httpClient);
     }
 
     private void initMenuButtons() {
@@ -182,7 +136,7 @@ public class MainActivity extends PermissionManagerActivity {
                 SharedPreferences sharedPref = Utils.getSharedPref(MainActivity.this);
 
                 EditText serverUrlView = singInDialog.findViewById(R.id.server_url);
-                String serverUrl = sharedPref.getString(Constants.SERVER_URL_SHARED_KEY, getString(R.string.https));
+                String serverUrl = sharedPref.getString(Constants.SERVER_URL_SHARED_KEY, getString(R.string.http));
                 serverUrlView.setText(serverUrl);
 
                 EditText portView = singInDialog.findViewById(R.id.port);

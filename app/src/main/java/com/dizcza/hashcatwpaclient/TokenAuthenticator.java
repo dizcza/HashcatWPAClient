@@ -42,7 +42,7 @@ public class TokenAuthenticator implements Authenticator {
             IOException,
             KeyManagementException {
         mContext = context;
-        mTokenClient = OkHttpSSL.getSSLSelfSignedClient(context, false);
+        mTokenClient = new OkHttpClient();
     }
 
     public String getCredential() {

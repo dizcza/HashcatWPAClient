@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="textUri"
-            android:text="@string/https" />
+            android:text="@string/http" />
 
         <TextView
             android:layout_marginTop="@dimen/vertical_space"
