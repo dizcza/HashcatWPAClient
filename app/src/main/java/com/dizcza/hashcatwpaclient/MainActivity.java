@@ -1,13 +1,15 @@
 package com.dizcza.hashcatwpaclient;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,14 +19,13 @@ import net.gotev.uploadservice.UploadService;
 import net.gotev.uploadservice.okhttp.OkHttpStack;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -120,7 +121,7 @@ public class MainActivity extends PermissionManagerActivity {
         StrictMode.setThreadPolicy(policy);
 
         initMenuButtons();
-        httpClient = new OkHttpClient();
+        httpClient = Utils.buildClient(getApplicationContext());
         UploadService.HTTP_STACK = new OkHttpStack(httpClient);
     }
 

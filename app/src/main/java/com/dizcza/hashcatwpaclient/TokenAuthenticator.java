@@ -34,13 +34,7 @@ public class TokenAuthenticator implements Authenticator {
     private final Context mContext;
     private final OkHttpClient mTokenClient;
 
-    TokenAuthenticator(Context context)
-            throws
-            CertificateException,
-            NoSuchAlgorithmException,
-            KeyStoreException,
-            IOException,
-            KeyManagementException {
+    TokenAuthenticator(Context context) {
         mContext = context;
         mTokenClient = new OkHttpClient();
     }
